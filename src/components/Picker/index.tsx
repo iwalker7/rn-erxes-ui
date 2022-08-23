@@ -141,7 +141,7 @@ const Picker: React.FC<PickerProps> = ({
               </TextView>
             </Touchable>
           </View>
-          <SafeAreaView>
+          <View>
             <ScrollView
               style={[
                 {
@@ -167,9 +167,10 @@ const Picker: React.FC<PickerProps> = ({
                       style={[
                         styles.item,
                         {
-                          backgroundColor: selections?.includes(item)
-                            ? selectionColor
-                            : undefined,
+                          backgroundColor:
+                            selections && selections?.includes(item)
+                              ? selectionColor
+                              : undefined,
                         },
                         itemStyle,
                       ]}
@@ -182,7 +183,7 @@ const Picker: React.FC<PickerProps> = ({
                 );
               })}
             </ScrollView>
-          </SafeAreaView>
+          </View>
         </Surface>
       </Modal>
       <Touchable onPress={() => onVisible(!isVisible)}>

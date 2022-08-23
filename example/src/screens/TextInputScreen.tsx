@@ -45,10 +45,11 @@ const TextInputScreen: React.FC<any> = () => {
           <TextInput
             theme={theme}
             label={'Label'}
-            placeholder="Outline"
+            type="text"
+            helperText="helper test"
             onChangeText={(text: string) => setSearchText(text)}
             value={searchText}
-            containerStyle={{ marginVertical: 3 }}
+            containerStyle={{ marginBottom: 8 }}
           />
           <TextInput
             theme={theme}

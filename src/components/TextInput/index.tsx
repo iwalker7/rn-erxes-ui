@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, { LegacyRef } from 'react';
-import { ActivityIndicator, ColorValue, View } from 'react-native';
+import { ActivityIndicator, Animated, ColorValue, View } from 'react-native';
 import { StyleSheet } from 'react-native';
 import {
   NativeSyntheticEvent,
@@ -15,8 +15,13 @@ import Icon from '../Icon';
 import type { ViewStyle } from 'react-native';
 import { withTheme } from '../../core/theming';
 import Touchable from '../Touchable';
-import { grey100, red300 } from '../../styles/colors';
+import { grey100, grey200, red300 } from '../../styles/colors';
 import { rgba } from '../../utils/colorUtils';
+import { useState } from 'react';
+import { useRef } from 'react';
+import { useEffect } from 'react';
+import _ from 'lodash';
+import { deepPurple400 } from '../../styles/colors';
 
 export type TextInputProps = RNProps & {
   type?: 'default' | 'outline' | 'filled' | 'text';
@@ -62,6 +67,7 @@ export type TextInputProps = RNProps & {
   helperText?: string;
   prefix?: string;
   suffix?: string;
+  keyboardType?: string;
 };
 const TextInput: React.ForwardRefRenderFunction<unknown, TextInputProps> = ({
   style,
@@ -104,6 +110,7 @@ const TextInput: React.ForwardRefRenderFunction<unknown, TextInputProps> = ({
   helperText,
   prefix,
   suffix,
+  keyboardType,
   ...rest
 }) => {
   const { colors } = theme;
@@ -111,6 +118,32 @@ const TextInput: React.ForwardRefRenderFunction<unknown, TextInputProps> = ({
   const p = password ? '*****' : placeholder ? placeholder : '';
   const [mainColor, setMainColor] = React.useState(colors.primary);
   const [focused, setFocused] = React.useState<boolean>(false);
+
+  const animationIndex = useRef(new Animated.Value(value ? 1 : 0)).current;
+
+  const translateYLabel = animationIndex.interpolate({
+    inputRange: [0, 1],
+    outputRange: [14, 5],
+  });
+
+  const fontSize = animationIndex.interpolate({
+    inputRange: [0, 1],
+    outputRange: [14, 11],
+  });
+
+  const handleChangeText = (text: string) => {
+    if (disabled) {
+      return;
+    }
+    let passedText = text;
+    if (keyboardType === 'numeric') {
+      passedText = text.replace(/[^0-9]/g, '');
+    } else {
+      passedText = text;
+    }
+
+    onChangeText && onChangeText(passedText);
+  };
 
   const handleFocus = (args: any) => {
     if (disabled) {
@@ -120,12 +153,13 @@ const TextInput: React.ForwardRefRenderFunction<unknown, TextInputProps> = ({
     rest.onFocus?.(args);
   };
 
-  const handleChangeText = (v: string) => {
-    if (disabled) {
-      return;
-    }
-    onChangeText && onChangeText(v);
-  };
+  useEffect(() => {
+    Animated.timing(animationIndex, {
+      toValue: focused || !_.isEmpty(value) ? 1 : 0,
+      duration: 200,
+      useNativeDriver: false,
+    }).start();
+  }, [focused, value]);
 
   const handleSubmit = (
     e: NativeSyntheticEvent<TextInputSubmitEditingEventData>
@@ -146,15 +180,15 @@ const TextInput: React.ForwardRefRenderFunction<unknown, TextInputProps> = ({
               ? 'transparent'
               : focused
               ? rgba(colors.primary, 0.7)
-              : grey100,
+              : grey200,
             borderBottomColor:
               type === 'text'
-                ? colors.surfaceLight
+                ? grey200
                 : required
                 ? red300
                 : focused
                 ? rgba(colors.primary, 0.7)
-                : grey100,
+                : grey200,
             borderWidth: 1,
             flexDirection: 'row',
             alignItems: label ? 'flex-end' : 'center',
@@ -165,25 +199,21 @@ const TextInput: React.ForwardRefRenderFunction<unknown, TextInputProps> = ({
           containerStyle,
         ]}
       >
-        {label ? (
-          <View style={[styles.animatedStyle, labelContainerStyle]}>
-            {labelIcon ? (
-              labelIcon
-            ) : labelIconName ? (
-              <View style={{ marginStart: 5 }}>
-                <Icon
-                  source={labelIconName}
-                  color={labelIconColor}
-                  size={labelIconSize}
-                />
-              </View>
-            ) : null}
-            <TextView small color={labelColor} style={labelStyle}>
-              {label}
-            </TextView>
-          </View>
-        ) : null}
-
+        <Animated.Text
+          style={[
+            {
+              position: 'absolute',
+              fontWeight: '500',
+              left: labelIcon ? 20 : 10,
+              color: deepPurple400,
+              top: translateYLabel,
+              fontSize: fontSize,
+            },
+            labelStyle,
+          ]}
+        >
+          {label}
+        </Animated.Text>
         <View
           style={{
             flex: 1,
@@ -240,6 +270,10 @@ const TextInput: React.ForwardRefRenderFunction<unknown, TextInputProps> = ({
             onSubmitEditing={handleSubmit}
             value={value && value}
             underlineColorAndroid={'transparent'}
+            onBlur={() => {
+              //   onBlur && onBlur();
+              setFocused(false);
+            }}
             {...rest}
           />
         </View>
@@ -272,11 +306,12 @@ const TextInput: React.ForwardRefRenderFunction<unknown, TextInputProps> = ({
           />
         )}
       </View>
+
       <TextView
         small
         style={{
           position: 'relative',
-          top: 10,
+          top: 5,
           color: colors.textSecondary,
         }}
       >
