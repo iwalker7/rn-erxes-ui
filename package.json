@@ -1,6 +1,6 @@
 {
   "name": "react-native-erxes-ui",
-  "version": "0.1.50",
+  "version": "0.1.51",
   "description": "erxes react native ui library",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
