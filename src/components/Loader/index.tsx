@@ -6,11 +6,10 @@ import {
   ViewStyle,
   View,
   StyleProp,
-  ViewProps,
 } from 'react-native';
 import { withTheme } from '../../core/theming';
 
-export type LoaderProps = ViewProps & {
+export type LoaderProps = {
   backgroundColor?: string;
   color?: string;
   style?: StyleProp<ViewStyle>;

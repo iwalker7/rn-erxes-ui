@@ -2,14 +2,7 @@
 import React, { useState } from 'react';
 import type { SetStateAction } from 'react';
 import type { RefObject } from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StyleProp,
-  StyleSheet,
-  View,
-  ViewStyle,
-} from 'react-native';
+import { FlatList, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import { useTheme, withTheme } from '../../core/theming';
 import Surface from '../Surface';
 import Modal from '../Modal';
@@ -17,6 +10,7 @@ import Touchable from '../Touchable';
 import TextView from '../Typography';
 import ScreenUtils from '../../utils/screenUtils';
 import { useEffect } from 'react';
+import Divider from '../Divider';
 
 export type PickerProps = {
   data: any[];
@@ -60,14 +54,15 @@ const Picker: React.FC<PickerProps> = ({
   itemStyle,
   modalStyle,
 }) => {
-  const { colors } = useTheme(theme);
+  const { colors, roundness } = useTheme(theme);
+  const { screenHeight, screenWidth } = ScreenUtils;
   const [selections, setSelections] = useState<any[]>([]);
 
   useEffect(() => {
     if (value) {
       setSelections([value]);
     }
-  }, []);
+  }, [value]);
 
   const onSelect = (item: any) => {
     if (mode === 'SINGLE') {
@@ -95,16 +90,22 @@ const Picker: React.FC<PickerProps> = ({
 
   return (
     <>
-      <Modal bottom isVisible={isVisible} onVisible={onVisible} onHide={onHide}>
-        <Surface
-          style={[
-            {
-              width: ScreenUtils.screenWidth,
-              paddingBottom: 25,
-            },
-            modalStyle,
-          ]}
-        >
+      <Modal
+        bottom
+        isVisible={isVisible}
+        onVisible={onVisible}
+        onHide={onHide}
+        style={[
+          {
+            width: screenWidth,
+            paddingBottom: 25,
+            maxHeight: screenHeight - 100,
+            backgroundColor: colors.surface,
+          },
+          modalStyle,
+        ]}
+      >
+        <Surface>
           <View
             style={{
               height: 50,
@@ -122,11 +123,7 @@ const Picker: React.FC<PickerProps> = ({
               }}
               onPress={onHide}
             >
-              <TextView
-                bold
-                color={theme.colors.textPrimary}
-                style={closeTextStyle}
-              >
+              <TextView bold color={colors.textPrimary} style={closeTextStyle}>
                 {closeText}
               </TextView>
             </Touchable>
@@ -136,54 +133,43 @@ const Picker: React.FC<PickerProps> = ({
               }}
               onPress={onHide}
             >
-              <TextView bold color={theme.colors.success} style={saveTextStyle}>
+              <TextView bold color={colors.success} style={saveTextStyle}>
                 {saveText}
               </TextView>
             </Touchable>
           </View>
-          <View>
-            <ScrollView
-              style={[
-                {
-                  width: '100%',
-                },
-                modalStyle,
-              ]}
-              showsVerticalScrollIndicator={false}
-            >
-              {data?.map((item, index) => {
-                return (
-                  <Touchable
-                    key={index.toString()}
-                    onPress={() => {
-                      if (mode === 'SINGLE') {
-                        onVisible(false);
-                        onHide();
-                      }
-                      onSelect(item);
-                    }}
-                  >
-                    <View
-                      style={[
-                        styles.item,
-                        {
-                          backgroundColor:
-                            selections && selections?.includes(item)
-                              ? selectionColor
-                              : undefined,
-                        },
-                        itemStyle,
-                      ]}
-                    >
-                      <TextView color={theme.colors.textPrimary}>
-                        {item}
-                      </TextView>
-                    </View>
-                  </Touchable>
-                );
-              })}
-            </ScrollView>
-          </View>
+
+          <FlatList
+            data={data}
+            ItemSeparatorComponent={() => <Divider />}
+            renderItem={({ item, index }) => (
+              <Touchable
+                key={index.toString()}
+                onPress={() => {
+                  if (mode === 'SINGLE') {
+                    onVisible(false);
+                    onHide();
+                  }
+                  onSelect(item);
+                }}
+              >
+                <View
+                  style={[
+                    styles.item,
+                    {
+                      backgroundColor:
+                        selections && selections?.includes(item)
+                          ? selectionColor
+                          : undefined,
+                    },
+                    itemStyle,
+                  ]}
+                >
+                  <TextView>{item}</TextView>
+                </View>
+              </Touchable>
+            )}
+          />
         </Surface>
       </Modal>
       <Touchable onPress={() => onVisible(!isVisible)}>
@@ -191,18 +177,18 @@ const Picker: React.FC<PickerProps> = ({
           style={[
             styles.container,
             {
-              backgroundColor: theme.colors.surfaceHighlight,
-              borderRadius: theme.roundness,
+              backgroundColor: colors.surfaceHighlight,
+              borderRadius: roundness,
               borderColor: '#C5C6CC',
               borderWidth: 1,
             },
             placeholderStyle,
           ]}
         >
-          <TextView color={theme.colors.textPrimary}>
-            {mode === 'MULTI' && selections?.length > 0
-              ? selections?.join(', ')
-              : mode === 'SINGLE' && selections?.length === 1 && selections[0]
+          <TextView>
+            {selections?.length > 0
+              ? JSON.stringify(selections).replace(/[.""*+?^${}()|[\]\\]/g, '')
+              : selections?.length === 1
               ? selections[0]
               : placeholder}
           </TextView>

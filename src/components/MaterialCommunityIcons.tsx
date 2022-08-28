@@ -4,7 +4,6 @@ import {
   Text,
   Platform,
   TextProps,
-  ViewProps,
   ColorValue,
 } from 'react-native';
 
@@ -21,7 +20,6 @@ let MaterialCommunityIcons: React.ComponentType<
     name: string;
     color: string | ColorValue | undefined;
     size?: number;
-    pointerEvents?: ViewProps['pointerEvents'];
   }
 >;
 

@@ -8,7 +8,6 @@ import {
   TextStyle,
 } from 'react-native';
 import { useTheme } from '../../core/theming';
-import { red400 } from '../../styles/colors';
 
 export type TextViewProps = TextProps & {
   xxsmall?: boolean;

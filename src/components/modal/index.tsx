@@ -6,36 +6,34 @@ import {
   StyleProp,
   TouchableOpacity,
   View,
-  ViewProps as RNViewProps,
   ViewStyle,
 } from 'react-native';
 import ScreenUtils from '../../utils/screenUtils';
 import { withTheme } from '../../core/theming';
 import Surface from '../Surface';
 
-export type ModalProps = RNModalProps &
-  RNViewProps & {
-    onHide?: () => void;
-    isVisible: boolean;
-    onVisible: SetStateAction<any>;
-    children?: React.ReactNode;
-    style?: StyleProp<ViewStyle> | {};
-    modalContainerStyle?: StyleProp<ViewStyle> | {};
-    cancelable?: boolean;
-    bottom?: boolean;
-    withoutTouch?: boolean;
-    bgColor?: string;
-    headerComponent?: JSX.Element;
-    iconClose?: JSX.Element;
-    closeText?: string;
-    transparent?: boolean;
-    presentationStyle?:
-      | 'fullScreen'
-      | 'pageSheet'
-      | 'formSheet'
-      | 'overFullScreen';
-    theme: ReactNativeErxes.Theme;
-  };
+export type ModalProps = RNModalProps & {
+  onHide?: () => void;
+  isVisible: boolean;
+  onVisible: SetStateAction<any>;
+  children?: React.ReactNode;
+  style?: StyleProp<ViewStyle> | {};
+  modalContainerStyle?: StyleProp<ViewStyle> | {};
+  cancelable?: boolean;
+  bottom?: boolean;
+  withoutTouch?: boolean;
+  bgColor?: string;
+  headerComponent?: JSX.Element;
+  iconClose?: JSX.Element;
+  closeText?: string;
+  transparent?: boolean;
+  presentationStyle?:
+    | 'fullScreen'
+    | 'pageSheet'
+    | 'formSheet'
+    | 'overFullScreen';
+  theme: ReactNativeErxes.Theme;
+};
 
 const Modal: React.FC<ModalProps> = ({
   theme,
