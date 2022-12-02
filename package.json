@@ -158,7 +158,7 @@
     "@react-navigation/drawer": "^6.4.1",
     "color": "^4.2.3",
     "lodash": "^4.17.21",
-    "moment": "^2.29.2",
+    "moment": "^2.29.4",
     "react-native-document-picker": "^8.1.0",
     "react-native-gesture-handler": "^2.4.0",
     "react-native-image-picker": "^4.7.3",
