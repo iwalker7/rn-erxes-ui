@@ -155,7 +155,7 @@
   },
   "dependencies": {
     "@callstack/react-theme-provider": "^3.0.7",
-    "@react-navigation/drawer": "^6.4.1",
+    "@react-navigation/drawer": "^6.5.0",
     "color": "^4.2.3",
     "lodash": "^4.17.21",
     "moment": "^2.29.2",
